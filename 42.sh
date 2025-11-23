@@ -2,7 +2,7 @@
 
 # Fortytwo CPU Node Installer – 老CPU终极保活版（无AVX2也能跑）
 # 专治 Octa / E5 v3/v4 等老机器的 Illegal instruction
-# 模型：Llama-3.2-1B Q3_K_M（高积分 + 超稳）
+# 模型：VibeThinker-1.5B Q5_K_M (来自 MaziyaPanahi/VibeThinker-1.5B-GGUF)
 
 animate_text() {
     local text="$1"
@@ -16,14 +16,14 @@ animate_text() {
 clear
 echo "┌────────────────────────────────────────────────────────────┐"
 echo "│     Fortytwo CPU Node – 老CPU终极保活版（无AVX2也能跑）    │"
-echo "│              模型改用 Llama-3.2-1B Q3_K_M 超高积分          │"
+echo "│                模型改用 VibeThinker-1.5B Q5_K_M            │"
 echo "└────────────────────────────────────────────────────────────┘"
 echo ""
 
-# 强制使用最兼容、积分最高的模型组合
-export LLM_HF_REPO="TheBloke/Llama-3.2-1B-Instruct-GGUF"
-export LLM_HF_MODEL_NAME="llama-3.2-1b-instruct-q3_k_m.gguf"
-export NODE_NAME="Llama-3.2-1B-Instruct Q3_K_M（高积分+超稳）"
+# 【已修改】使用 VibeThinker-1.5B GGUF 模型配置
+export LLM_HF_REPO="MaziyaPanahi/VibeThinker-1.5B-GGUF"
+export LLM_HF_MODEL_NAME="VibeThinker-1.5B-Q5_K_M.gguf"
+export NODE_NAME="VibeThinker-1.5B Q5_K_M"
 
 # 目录设置
 PROJECT_DIR="$HOME/FortytwoNode"
@@ -74,11 +74,12 @@ else
 fi
 
 # 下载兼容模型
-animate_text "正在下载超稳高积模型：$NODE_NAME..."
+animate_text "正在下载模型：$NODE_NAME..."
 "$UTILS_EXEC" --hf-repo "$LLM_HF_REPO" --hf-model-name "$LLM_HF_MODEL_NAME" --model-cache "$PROJECT_MODEL_CACHE_DIR" || {
     echo "Utils 下载失败，使用直链备用..."
+    # 【已修改】使用新的环境变量进行下载
     wget -O "$PROJECT_MODEL_CACHE_DIR/$LLM_HF_MODEL_NAME" \
-    "https://huggingface.co/TheBloke/Llama-3.2-1B-Instruct-GGUF/resolve/main/$LLM_HF_MODEL_NAME"
+    "https://huggingface.co/$LLM_HF_REPO/resolve/main/$LLM_HF_MODEL_NAME"
 }
 
 # 下载 Capsule 和 Protocol
@@ -92,7 +93,7 @@ curl -L -o "$PROTOCOL_EXEC" "https://fortytwo-network-public.s3.us-east-2.amazon
 chmod +x "$PROTOCOL_EXEC"
 
 # 启动 Capsule
-animate_text "正在启动 Capsule（使用高积分稳如老狗模型）..."
+animate_text "正在启动 Capsule（使用模型：$NODE_NAME）..."
 "$CAPSULE_EXEC" \
   --llm-hf-repo "$LLM_HF_REPO" \
   --llm-hf-model-name "$LLM_HF_MODEL_NAME" \
@@ -110,7 +111,7 @@ while ! curl -s http://127.0.0.1:42442/ready >/dev/null 2>&1; do
         exit 1
     fi
     if [[ $timeout -gt 180 ]]; then
-        echo "❌ 超时！重试或换 Q2_K 模型。"
+        echo "❌ 超时！请检查模型文件是否正确下载。"
         exit 1
     fi
 done
