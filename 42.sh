@@ -2,7 +2,7 @@
 
 # Fortytwo CPU Node Installer – 老CPU终极保活版（无AVX2也能跑）
 # 专治 Octa / E5 v3/v4 等老机器的 Illegal instruction
-# 模型：VibeThinker-1.5B Q5_K_M (来自 MaziyaPanahi/VibeThinker-1.5B-GGUF)
+# 模型：TinyLlama 1.1B Chat Q4_K_M (轻量/公开模型)
 
 animate_text() {
     local text="$1"
@@ -16,14 +16,14 @@ animate_text() {
 clear
 echo "┌────────────────────────────────────────────────────────────┐"
 echo "│     Fortytwo CPU Node – 老CPU终极保活版（无AVX2也能跑）    │"
-echo "│                模型改用 VibeThinker-1.5B Q5_K_M            │"
+echo "│              模型改用 TinyLlama 1.1B Chat Q4_K_M           │"
 echo "└────────────────────────────────────────────────────────────┘"
 echo ""
 
-# 【已修改】使用 VibeThinker-1.5B GGUF 模型配置
-export LLM_HF_REPO="MaziyaPanahi/VibeThinker-1.5B-GGUF"
-export LLM_HF_MODEL_NAME="VibeThinker-1.5B-Q5_K_M.gguf"
-export NODE_NAME="VibeThinker-1.5B Q5_K_M"
+# 【已修改】使用 TinyLlama 1.1B Chat 模型配置
+export LLM_HF_REPO="TheBloke/TinyLlama-1.1B-Chat-v1.0-GGUF"
+export LLM_HF_MODEL_NAME="tinyllama-1.1b-chat-v1.0.Q4_K_M.gguf"
+export NODE_NAME="TinyLlama 1.1B Chat Q4 (轻量/免Token)"
 
 # 目录设置
 PROJECT_DIR="$HOME/FortytwoNode"
@@ -77,7 +77,7 @@ fi
 animate_text "正在下载模型：$NODE_NAME..."
 "$UTILS_EXEC" --hf-repo "$LLM_HF_REPO" --hf-model-name "$LLM_HF_MODEL_NAME" --model-cache "$PROJECT_MODEL_CACHE_DIR" || {
     echo "Utils 下载失败，使用直链备用..."
-    # 【已修改】使用新的环境变量进行下载
+    # 【已修改】现在使用环境变量，链接是动态的
     wget -O "$PROJECT_MODEL_CACHE_DIR/$LLM_HF_MODEL_NAME" \
     "https://huggingface.co/$LLM_HF_REPO/resolve/main/$LLM_HF_MODEL_NAME"
 }
